@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Calculator - Airius</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:monospace}
+body{background:#0a0f1e;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:15px;color:#fff}
+.calc{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:24px;padding:18px;width:100%;max-width:380px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.top{text-align:center;margin-bottom:12px}
+.top h1{color:#00ff88;font-size:18px;letter-spacing:2px;text-shadow:0 0 10px #00ff88}
+.top p{color:#666;font-size:9px;margin-top:4px}
+.display{background:#000;border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid #222;text-align:right;min-height:85px}
+.prev{color:#666;font-size:12px;min-height:14px;word-break:break-all}
+.curr{color:#fff;font-size:28px;font-weight:bold;word-break:break-all;margin-top:4px}
+.mode{font-size:8px;color:#00d4ff;margin-top:4px}
+.keys{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+button{padding:14px 4px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.08);color:#fff;font-size:14px;cursor:pointer;transition:0.15s}
+button:active{transform:scale(0.92)}
+.num{background:rgba(255,255,255,0.12);font-weight:bold}
+.op{background:rgba(0,212,255,0.2);border-color:#00d4ff66;color:#00d4ff}
+.sci{background:rgba(255,95,168,0.15);border-color:#ff5fa866;color:#ff8cc0;font-size:11px}
+.eq{background:linear-gradient(135deg,#00ff88,#00d4ff);color:#000;font-weight:bold;font-size:18px;grid-column:span 2}
+.clear{background:rgba(255,70,70,0.2);border-color:#ff464666;color:#ff6b6b}
+.zero{grid-column:span 2}
+.back{margin-top:14px;text-align:center}
+.back a{color:#00d4ff;font-size:10px;text-decoration:none;border:1px solid #00d4ff55;padding:6px 16px;border-radius:20px}
+</style>
+</head>
+<body>
+<div class="calc">
+<div class="top"><h1>🔬 SCI CALC 🧮</h1><p>by Airius • DEG Mode • Scientific</p></div>
+<div class="display">
+<div class="prev" id="prev"></div>
+<div class="curr" id="curr">0</div>
+<div class="mode" id="mode">DEG | Click RAD to switch</div>
+</div>
+<div class="keys">
+<button class="clear" onclick="clearAll()">AC</button>
+<button class="clear" onclick="del()">DEL</button>
+<button class="sci" onclick="insert('(')">(</button>
+<button class="sci" onclick="insert(')')">)</button>
+<button class="op" onclick="insert('/')">÷</button>
+
+<button class="sci" onclick="func('sin')">sin</button>
+<button class="sci" onclick="func('cos')">cos</button>
+<button class="sci" onclick="func('tan')">tan</button>
+<button class="sci" onclick="func('log')">log</button>
+<button class="op" onclick="insert('*')">×</button>
+
+<button class="sci" onclick="func('ln')">ln</button>
+<button class="sci" onclick="insert('Math.sqrt(')">√</button>
+<button class="sci" onclick="insert('**')">xʸ</button>
+<button class="sci" onclick="insert('Math.PI')">π</button>
+<button class="op" onclick="insert('-')">−</button>
+
+<button class="sci" onclick="func('fact')">n!</button>
+<button class="sci" onclick="insert('Math.E')">e</button>
+<button class="sci" onclick="insert('%')">%</button>
+<button class="sci" onclick="toggleAngle()">RAD</button>
+<button class="op" onclick="insert('+')">+</button>
+
+<button class="num" onclick="insert('7')">7</button>
+<button class="num" onclick="insert('8')">8</button>
+<button class="num" onclick="insert('9')">9</button>
+<button class="num" onclick="insert('4')">4</button>
+<button class="num" onclick="insert('5')">5</button>
+<button class="num" onclick="insert('6')">6</button>
+<button class="num" onclick="insert('1')">1</button>
+<button class="num" onclick="insert('2')">2</button>
+<button class="num" onclick="insert('3')">3</button>
+<button class="num zero" onclick="insert('0')">0</button>
+<button class="num" onclick="insert('.')">.</button>
+<button class="eq" onclick="calculate()">=</button>
+</div>
+<div class="back"><a href="https://airius-the-creator.github.io/airius-the-creator/">← Back to Main</a></div>
+</div>
+
+<script>
+let curr = document.getElementById('curr');
+let prev = document.getElementById('prev');
+let modeEl = document.getElementById('mode');
+let expression = '';
+let isDeg = true;
+let isRadBtn = false;
+
+function updateDisplay(){
+curr.innerText = expression || '0';
+}
+
+function insert(val){
+expression += val;
+updateDisplay();
+}
+
+function clearAll(){
+expression = '';
+prev.innerText = '';
+curr.innerText = '0';
+}
+
+function del(){
+expression = expression.slice(0,-1);
+updateDisplay();
+}
+
+function toggleAngle(){
+isDeg = !isDeg;
+modeEl.innerText = isDeg ? 'DEG | Click RAD to switch' : 'RAD | Click DEG to switch';
+}
+
+function func(type){
+if(type==='sin' || type==='cos' || type==='tan'){
+let v = parseFloat(curr.innerText) || 0;
+if(type==='sin') v = isDeg ? Math.sin(v*Math.PI/180) : Math.sin(v);
+if(type==='cos') v = isDeg ? Math.cos(v*Math.PI/180) : Math.cos(v);
+if(type==='tan') v = isDeg ? Math.tan(v*Math.PI/180) : Math.tan(v);
+expression = v.toString();
+prev.innerText = type+'('+(isDeg?curr.innerText+'°':curr.innerText)+')';
+updateDisplay();
+} else if(type==='log'){
+let v = Math.log10(parseFloat(expression)||0);
+expression = v.toString(); updateDisplay();
+} else if(type==='ln'){
+let v = Math.log(parseFloat(expression)||0);
+expression = v.toString(); updateDisplay();
+} else if(type==='fact'){
+let n = parseInt(expression)||0;
+let f=1; for(let i=2;i<=n;i++) f*=i;
+expression = f.toString(); updateDisplay();
+}
+}
+
+function calculate(){
+try{
+let exp = expression.replace(/Math\.PI/g,'Math.PI').replace(/Math\.E/g,'Math.E');
+let result = Function('"use strict"; return ('+exp+')')();
+prev.innerText = expression + ' =';
+expression = Number(result.toFixed(10)).toString();
+curr.innerText = expression;
+}catch(e){
+curr.innerText = 'Error';
+expression = '';
+}
+if(navigator.vibrate) navigator.vibrate(50);
+}
+</script>
+</body>
+</html>
